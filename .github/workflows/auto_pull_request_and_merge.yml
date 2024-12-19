@@ -1,0 +1,42 @@
+name: Auto Pull Request and Merge
+
+on:
+  push:
+    branches:
+      - one-victus/dev
+
+jobs:
+  auto-pr-merge:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Configurar el repositorio
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 2. Configurar GitHub CLI
+    - name: Set up GitHub CLI
+      run: |
+        sudo apt-get install -y gh
+        gh auth login --with-token <<< "$GITHUB_TOKEN"
+
+    # 3. Crear Pull Request
+    - name: Create Pull Request
+      id: create_pr
+      run: |
+        gh pr create --title "Auto PR: one-victus/dev to main" \
+                     --body "This PR was created automatically by GitHub Actions." \
+                     --base main \
+                     --head one-victus/dev \
+
+    # 4. Hacer Merge del PR
+    - name: Merge Pull Request
+      run: |
+        gh pr merge $(gh pr list --state open --json number --jq '.[0].number') --merge --delete-branch
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # 5. Limpiar ramas remotas (opcional)
+    - name: Cleanup branches
+      run: |
+        git push origin --delete one-victus/dev
