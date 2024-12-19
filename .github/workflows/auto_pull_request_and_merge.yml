@@ -51,9 +51,9 @@ jobs:
           exit 0
         else
           gh pr create --title "Auto PR: one-victus/dev to main" \
-                     --body "This PR was created automatically by GitHub Actions." \
-                     --base main \
-                     --head one-victus/dev \
+                       --body "This PR was created automatically by GitHub Actions." \
+                       --base main \
+                       --head one-victus/dev \
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
