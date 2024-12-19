@@ -19,7 +19,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    # 2. Configurar GitHub CLI
     # - name: Set up GitHub CLI
     #  run: |
     #    sudo apt-get install -y gh
@@ -35,7 +34,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # 3. Crear Pull Request
+    # 3. Validar commits pendientes
+    - name: Validate Pending Commits
+      run: |
+        if [ "$(git rev-list --count origin/main..HEAD)" -eq 0 ]; then
+          echo "No commits to merge. Exiting."
+          exit 0
+        fi
+
+    # 4. Crear Pull Request
     - name: Create Pull Request
       id: create_pr
       run: |
@@ -46,14 +53,19 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # 4. Hacer Merge del PR
+    # 5. Hacer Merge del PR
     - name: Merge Pull Request
       run: |
         gh pr merge $(gh pr list --state open --json number --jq '.[0].number') --merge --delete-branch
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # 5. Limpiar ramas remotas (opcional)
-    - name: Cleanup branches
+    # 6. Validar y limpiar ramas remotas
+    - name: Validate and Cleanup Branches
       run: |
-        git push origin --delete one-victus/dev
+        if git show-ref --verify --quiet refs/remotes/origin/one-victus/dev; then
+          git push origin --delete one-victus/dev
+          echo "Branch 'one-victus/dev' deleted."
+        else
+          echo "Branch 'one-victus/dev' does not exist. Skipping deletion."
+        fi
