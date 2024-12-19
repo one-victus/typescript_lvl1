@@ -56,7 +56,7 @@ jobs:
     # 5. Hacer Merge del PR
     - name: Merge Pull Request
       run: |
-        gh pr merge $(gh pr list --state open --json number --jq '.[0].number') --merge --delete-branch
+        gh pr merge $(gh pr list --state open --json number --jq '.[0].number') --merge
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
