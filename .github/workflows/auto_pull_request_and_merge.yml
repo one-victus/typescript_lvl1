@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - one-victus/dev
+  create:
+    branches:
+      - one-victus/dev
 
 jobs:
   auto-pr-merge:
