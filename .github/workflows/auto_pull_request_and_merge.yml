@@ -16,12 +16,24 @@ jobs:
     # 1. Configurar el repositorio
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     # 2. Configurar GitHub CLI
     # - name: Set up GitHub CLI
     #  run: |
     #    sudo apt-get install -y gh
     #    gh auth login --with-token <<< "$GITHUB_TOKEN"
+
+    # 2. Verificar si hay un pull request creado, por el doble disparador
+    - name: Check for Existing Pull Request
+      run: |
+        if gh pr list --base main --head one-victus/dev --json number --jq '.[].number' | grep -q '.'; then
+          echo "Pull Request already exists. Skipping creation."
+          exit 0
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # 3. Crear Pull Request
     - name: Create Pull Request
