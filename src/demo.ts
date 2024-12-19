@@ -20,7 +20,7 @@
     }
     return total;
   }
-  function addProduct(index) {
+  function addProduct(index: number): void {
     if (getTotal() <= limit) {
       myCart.push(products[index]);
     }
@@ -35,6 +35,4 @@
     name: 'Nicolas',
     lastName: 'Molina'
   }
-  const rta = person['limit'] = limit;
-  console.log(rta);
 });
