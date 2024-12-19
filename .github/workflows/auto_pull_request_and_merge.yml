@@ -31,6 +31,8 @@ jobs:
                      --body "This PR was created automatically by GitHub Actions." \
                      --base main \
                      --head one-victus/dev \
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # 4. Hacer Merge del PR
     - name: Merge Pull Request
